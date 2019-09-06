@@ -98,6 +98,8 @@ local function ResetSuitPlaylist( ply )
 		ply.suitPlaylistNoRepeat[i] = nil;
 		ply.suitPlaylistNoRepeatTime[i] = 0.0;
 	end
+
+	return nil;
 end
 hook.Add( "PlayerSpawn", "SuitVoice_Spawn", ResetSuitPlaylist );
 hook.Add( "PlayerDeath", "SuitVoice_Death", ResetSuitPlaylist );
@@ -118,12 +120,12 @@ end
 -- Runs and constantly checks to see if a voiceline is queued up.
 local function CheckSuitUpdate( ply )
 	if ( ply.suitPlaylistEnabled < 1 || !ply:IsSuitEquipped() ) then
-		return;
+		return nil;
 	end
 
 	-- Allow a hook into this function.
 	if ( hook.Run( "CheckSuitUpdate", ply ) == true ) then
-		return;
+		return nil;
 	end
 
 	if ( CurTime() >= ply.suitUpdateTime && ply.suitUpdateTime > 0 ) then
@@ -149,6 +151,8 @@ local function CheckSuitUpdate( ply )
 			ply.suitUpdateTime = 0;
 		end
 	end
+
+	return nil;
 end
 hook.Add( "PlayerPostThink", "SuitVoice_Think", CheckSuitUpdate );
 
@@ -217,7 +221,7 @@ end
 -- Detects whatever harm this player has gotten themselves into.
 local function OnTakeDamage( ply, dmginfo )
 	if ( ( !ply:IsPlayer() || !ply:IsSuitEquipped() ) || ply.suitPlaylistEnabled < 1 ) then
-		return;
+		return nil;
 	end
 
 	-- Armor calculations needed to get a proper diagnosis.
@@ -415,6 +419,8 @@ local function OnTakeDamage( ply, dmginfo )
 			end
 		end
 	end
+
+	return nil;
 end
 hook.Add( "EntityTakeDamage", "SuitVoice_OnTakeDamage", OnTakeDamage );
 
@@ -430,5 +436,7 @@ local function ItemPickup( ply, item )
 			SetSuitUpdate( ply, batteryLevel .. "P", SUIT_NEXT_IN_30SEC );
 		end
 	end
+
+	return nil;
 end
 hook.Add( "PlayerCanPickupItem", "SuitVoice_ItemPickup", ItemPickup );

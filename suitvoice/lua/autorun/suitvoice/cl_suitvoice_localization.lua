@@ -5,7 +5,10 @@ local langFile = "resource/localization/%s/suitvoice.properties";
 
 local BaseLanguageChanged = LanguageChanged;
 function LanguageChanged( lang )
-	print( "Language: " .. lang );
+	if ( BaseLanguageChanged != nil ) then
+		BaseLanguageChanged( lang );
+	end
+
 	currentLang = lang;
 
 	local langPath = string.format( langFile, currentLang );
@@ -29,10 +32,6 @@ function LanguageChanged( lang )
         local _, _, key, value = string.find( key, '([%w%p_]+)=(.+)' );
         language.Add( key, value );
     end
-
-	if ( BaseLanguageChanged != nil ) then
-		BaseLanguageChanged( lang );
-	end
 end
 
 if ( BaseLanguageChanged == LanguageChanged ) then
