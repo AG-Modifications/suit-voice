@@ -1,0 +1,8 @@
+# VSCode
+*.code-workspace
+
+# Assets
+sound/
+
+# Steam Workshop
+addon.json
