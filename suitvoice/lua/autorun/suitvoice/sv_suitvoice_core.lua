@@ -98,8 +98,6 @@ local function ResetSuitPlaylist( ply )
 		ply.suitPlaylistNoRepeat[i] = nil;
 		ply.suitPlaylistNoRepeatTime[i] = 0.0;
 	end
-
-	return nil;
 end
 hook.Add( "PlayerSpawn", "SuitVoice_Spawn", ResetSuitPlaylist );
 hook.Add( "PlayerDeath", "SuitVoice_Death", ResetSuitPlaylist );
@@ -125,7 +123,7 @@ local function CheckSuitUpdate( ply )
 
 	-- Allow a hook into this function.
 	if ( hook.Run( "CheckSuitUpdate", ply ) == true ) then
-		return nil;
+		return;
 	end
 
 	if ( CurTime() >= ply.suitUpdateTime && ply.suitUpdateTime > 0 ) then
