@@ -120,7 +120,7 @@ end
 -- Runs and constantly checks to see if a voiceline is queued up.
 local function CheckSuitUpdate( ply )
 	if ( ply.suitPlaylistEnabled < 1 || !ply:IsSuitEquipped() ) then
-		return nil;
+		return;
 	end
 
 	-- Allow a hook into this function.
@@ -151,8 +151,6 @@ local function CheckSuitUpdate( ply )
 			ply.suitUpdateTime = 0;
 		end
 	end
-
-	return nil;
 end
 hook.Add( "PlayerPostThink", "SuitVoice_Think", CheckSuitUpdate );
 
@@ -172,7 +170,7 @@ function SetSuitUpdate( ply, sentence, norepeattime )
 	end
 
 	-- Allow a hook into this function.
-	if ( hook.Run( "SetSuitUpdate", ply, sentence, norepeattime ) == false ) then
+	if ( hook.Run( "SetSuitUpdate", ply, sentence, norepeattime ) == true ) then
 		return;
 	end
 
@@ -221,7 +219,7 @@ end
 -- Detects whatever harm this player has gotten themselves into.
 local function OnTakeDamage( ply, dmginfo )
 	if ( ( !ply:IsPlayer() || !ply:IsSuitEquipped() ) || ply.suitPlaylistEnabled < 1 ) then
-		return nil;
+		return;
 	end
 
 	-- Armor calculations needed to get a proper diagnosis.
@@ -420,7 +418,7 @@ local function OnTakeDamage( ply, dmginfo )
 		end
 	end
 
-	return nil;
+	return;
 end
 hook.Add( "EntityTakeDamage", "SuitVoice_OnTakeDamage", OnTakeDamage );
 
@@ -437,6 +435,6 @@ local function ItemPickup( ply, item )
 		end
 	end
 
-	return nil;
+	return;
 end
 hook.Add( "PlayerCanPickupItem", "SuitVoice_ItemPickup", ItemPickup );
