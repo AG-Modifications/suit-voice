@@ -1,6 +1,3 @@
-A Garry's Mod addon made to faithfully recreate Half-Life's iconic H.E.V. Suit voice.
-
-
 # Steam Workshop
 ## Core
 H.E.V. Suit Voice Module:
