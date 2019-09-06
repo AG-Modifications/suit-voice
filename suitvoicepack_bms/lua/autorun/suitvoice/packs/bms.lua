@@ -6,7 +6,7 @@ RegisterSuitVoicePack( "Black Mesa", "bms", "///////////////////////////////////
 local function SetSuitUpdate( ply, sentence )
     if ( ply.suitPlaylistPack == "bms" ) then
         if ( sentence == "DMG2" || sentence == "SHOCK" || sentence == "FIRE" ) then
-            return false;
+            return true;
         end
     end
 end

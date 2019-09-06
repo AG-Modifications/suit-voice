@@ -122,7 +122,7 @@ local function CheckSuitUpdate( ply )
 	end
 
 	-- Allow a hook into this function.
-	if ( hook.Run( "CheckSuitUpdate", ply ) == false ) then
+	if ( hook.Run( "CheckSuitUpdate", ply ) == true ) then
 		return;
 	end
 

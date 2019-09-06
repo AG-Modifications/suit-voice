@@ -11,19 +11,6 @@ function RegisterSuitVoicePack( name, value, sentences )
     } } )
 end
 
--- Load the important parts.
-if SERVER then
-    include( "suitvoice/sv_suitvoice_core.lua" );
-
-    AddCSLuaFile( "suitvoice/cl_suitvoice_core.lua" );
-    AddCSLuaFile( "suitvoice/cl_suitvoice_localization.lua" );
-    AddCSLuaFile( "suitvoice/cl_suitvoice_options.lua" );
-elseif CLIENT then
-    include( "suitvoice/cl_suitvoice_core.lua" );
-    include( "suitvoice/cl_suitvoice_localization.lua" );
-    include( "suitvoice/cl_suitvoice_options.lua" );
-end
-
 -- Check to see if there's any addon packs.
 local files, directories = file.Find( "autorun/suitvoice/packs/*.lua", "LUA" );
 for _, luaPackFile in pairs( files ) do
@@ -66,4 +53,17 @@ if SERVER then
     for _, sentencePackFile in pairs( files ) do
         PrecacheSentenceFile( "data/suitvoice/packs/loose" .. sentencePackFile );
     end
+end
+
+-- Now load the important parts.
+if SERVER then
+    include( "suitvoice/sv_suitvoice_core.lua" );
+
+    AddCSLuaFile( "suitvoice/cl_suitvoice_core.lua" );
+    AddCSLuaFile( "suitvoice/cl_suitvoice_localization.lua" );
+    AddCSLuaFile( "suitvoice/cl_suitvoice_options.lua" );
+elseif CLIENT then
+    include( "suitvoice/cl_suitvoice_core.lua" );
+    include( "suitvoice/cl_suitvoice_localization.lua" );
+    include( "suitvoice/cl_suitvoice_options.lua" );
 end
