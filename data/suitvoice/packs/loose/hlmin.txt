@@ -1,0 +1,57 @@
+////////////////////////////////////////////////////////////////
+// H.E.V. Suit Voice Pack - Half-Life (Minimal)
+////////////////////////////////////////////////////////////////
+
+// Medical Systems
+HEV_HLMIN_MED1 hl1/fvox/(p140) boop, boop, boop {Len 4.92 closecaption HEV.automedic_on}
+
+HEV_HLMIN_HEAL5 hl1/fvox/(p140) boop, boop, boop, (p100) hiss {Len 4.17 closecaption HEV.antidote_shot}
+HEV_HLMIN_HEAL7 hl1/fvox/(p140) boop, boop, boop, (p100) hiss {Len 4.16 closecaption HEV.morphine_shot}
+
+// Damage Monitoring
+HEV_HLMIN_DMG0 hl1/fvox/(p160) boop, boop, boop {Len 4.09 closecaption HEV.minor_lacerations}
+HEV_HLMIN_DMG1 hl1/fvox/(p160) boop, boop, boop {Len 4.19 closecaption HEV.major_lacerations}
+HEV_HLMIN_DMG2 hl1/fvox/(p160) boop, boop, boop {Len 3.64 closecaption HEV.internal_bleeding}
+HEV_HLMIN_DMG3 hl1/fvox/(p160) boop, boop, boop {Len 5.04 closecaption HEV.blood_toxins}
+HEV_HLMIN_DMG4 hl1/fvox/(p160) boop, boop, boop {Len 3.67 closecaption HEV.minor_fracture}
+HEV_HLMIN_DMG5 hl1/fvox/(p160) boop, boop, boop {Len 3.67 closecaption HEV.major_fracture}
+HEV_HLMIN_DMG6 hl1/fvox/(p160) boop, boop, boop {Len 3.39 closecaption HEV.blood_loss}
+HEV_HLMIN_DMG7 hl1/fvox/(p140) boop, boop, boop {Len 3.92 closecaption HEV.seek_medic}
+
+HEV_HLMIN_SHOCK hl1/fvox/(p120) beep, beep {Len 4.05 closecaption HEV.shock_damage}
+HEV_HLMIN_FIRE hl1/fvox/(p120) beep, beep {Len 4.77 closecaption HEV.heat_damage}
+
+// User Condition Monitoring
+HEV_HLMIN_HLTH1 hl1/fvox/(p120) beep, beep {Len 3.68 closecaption HEV.health_dropping2}
+HEV_HLMIN_HLTH2 hl1/fvox/(p120) beep, beep, beep {Len 4.32 closecaption HEV.health_critical}
+HEV_HLMIN_HLTH3 hl1/fvox/(p120) beep, beep, beep {Len 4.77 closecaption HEV.near_death}
+
+// Battery Power Level
+HEV_HLMIN_0P hl1/fvox/fuzz fuzz {Len 6.35}
+HEV_HLMIN_1P hl1/fvox/fuzz fuzz {Len 2.75}
+HEV_HLMIN_2P hl1/fvox/fuzz fuzz {Len 3.15}
+HEV_HLMIN_3P hl1/fvox/fuzz fuzz {Len 2.99}
+HEV_HLMIN_4P hl1/fvox/fuzz fuzz {Len 3.87}
+HEV_HLMIN_5P hl1/fvox/fuzz fuzz {Len 3.04}
+HEV_HLMIN_6P hl1/fvox/fuzz fuzz {Len 3.91}
+HEV_HLMIN_7P hl1/fvox/fuzz fuzz {Len 3.07}
+HEV_HLMIN_8P hl1/fvox/fuzz fuzz {Len 3.95}
+HEV_HLMIN_9P hl1/fvox/fuzz fuzz {Len 3.17}
+HEV_HLMIN_10P hl1/fvox/fuzz fuzz {Len 4.05}
+HEV_HLMIN_11P hl1/fvox/fuzz fuzz {Len 3.16}
+HEV_HLMIN_12P hl1/fvox/fuzz fuzz {Len 4.04}
+HEV_HLMIN_13P hl1/fvox/fuzz fuzz {Len 3.12}
+HEV_HLMIN_14P hl1/fvox/fuzz fuzz {Len 4.00}
+HEV_HLMIN_15P hl1/fvox/fuzz fuzz {Len 2.88}
+HEV_HLMIN_16P hl1/fvox/fuzz fuzz {Len 3.76}
+HEV_HLMIN_17P hl1/fvox/fuzz fuzz {Len 3.12}
+HEV_HLMIN_18P hl1/fvox/fuzz fuzz {Len 4.00}
+HEV_HLMIN_19P hl1/fvox/fuzz fuzz {Len 4.62}
+
+// Ammunition Monitoring
+HEV_HLMIN_AMO0 hl1/fvox/blip {Len 2.16 closecaption HEV.ammo_depleted}
+
+// Hazardous Element Detection
+HEV_HLMIN_DET0 hl1/fvox/blip blip blip {Len 3.67 closecaption HEV.biohazard_detected}
+HEV_HLMIN_DET1 hl1/fvox/blip blip blip {Len 4.33 closecaption HEV.chemical_detected}
+HEV_HLMIN_DET2 hl1/fvox/blip blip blip {Len 5.08 closecaption HEV.radiation_detected}

@@ -36,22 +36,22 @@ if SERVER then
         file.Write( "suitvoice/packs/" .. v.value .. ".txt", v.rawsentencedata );
     end
 
+    local files, directories = file.Find( "suitvoice/packs/loose/*.txt", "DATA" );
+    for _, sentencePackFile in pairs( files ) do
+        PrecacheSentenceFile( "data/suitvoice/packs/loose/" .. sentencePackFile );
+    end
+
     -- Parse any sentence file found here for use by the suit voice.
     local files, directories = file.Find( "suitvoice/packs/*.txt", "DATA" );
     for _, sentencePackFile in pairs( files ) do
-        local sentencePackFileNoExt = string.StripExtension( sentencePackFile );
-        if ( !file.Exists( "autorun/suitvoice/packs/" .. sentencePackFileNoExt .. ".lua", "LUA" ) ) then
-            file.Delete( "suitvoice/packs/" .. sentencePackFile );
-            return;
+        -- If we find the same file here, then we're using the loose one instead.
+        if ( !file.Exists( "suitvoice/packs/loose/" .. sentencePackFile, "DATA" ) ) then
+            if ( file.Exists( "autorun/suitvoice/packs/" .. string.StripExtension( sentencePackFile ) .. ".lua", "LUA" ) ) then
+                PrecacheSentenceFile( "data/suitvoice/packs/" .. sentencePackFile );
+            end
         end
 
-        PrecacheSentenceFile( "data/suitvoice/packs/" .. sentencePackFile );
         file.Delete( "suitvoice/packs/" .. sentencePackFile );
-    end
-
-    local files, directories = file.Find( "suitvoice/packs/loose/*.txt", "DATA" );
-    for _, sentencePackFile in pairs( files ) do
-        PrecacheSentenceFile( "data/suitvoice/packs/loose" .. sentencePackFile );
     end
 end
 

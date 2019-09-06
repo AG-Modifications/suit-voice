@@ -257,7 +257,7 @@ local function OnTakeDamage( ply, dmginfo )
 	local critical = ( newHealth < 30 );
 	
 	local damageFound = true;
-	local requiresAntitoxin = false;
+	local requiresAntidote = false;
 	while ( lastDamage && ( !trivial || Damage_IsTimeBased( damageType ) ) && damageFound && damageType ) do
 		damageFound = false;
 
@@ -270,25 +270,14 @@ local function OnTakeDamage( ply, dmginfo )
 			damageFound = true;
 		end
 		
-		if ( bit.band( damageType, DMG_FALL ) != 0 ) then
+		if ( bit.band( damageType, bit.bor( DMG_FALL, DMG_CRUSH ) ) != 0 ) then
 			if ( major ) then
 				SetSuitUpdate( ply, "DMG5", SUIT_NEXT_IN_30SEC );				-- Major Fracture Detected.
 			else
 				SetSuitUpdate( ply, "DMG4", SUIT_NEXT_IN_30SEC );				-- Minor Fracture Detected.
 			end
 
-			damageType = bit.band( damageType, bit.bxor( damageType, DMG_FALL ) );
-			damageFound = true;
-		end
-
-		if ( bit.band( damageType, DMG_CRUSH ) != 0 ) then
-			if ( major ) then
-				SetSuitUpdate( ply, "DMG5", SUIT_NEXT_IN_30SEC );				-- Major Fracture Detected.
-			else
-				SetSuitUpdate( ply, "DMG4", SUIT_NEXT_IN_30SEC );				-- Minor Fracture Detected.
-			end
-
-			damageType = bit.band( damageType, bit.bxor( damageType, DMG_CRUSH ) );
+			damageType = bit.band( damageType, bit.bxor( damageType, bit.bor( DMG_FALL, DMG_CRUSH ) ) );
 			damageFound = true;
 		end
 		
@@ -322,12 +311,19 @@ local function OnTakeDamage( ply, dmginfo )
 			damageType = bit.band( damageType, bit.bxor( damageType, DMG_SONIC ) );
 			damageFound = true;
 		end
-		
-		if ( bit.band( damageType, bit.bor( DMG_POISON, DMG_PARALYZE ) ) != 0 ) then
-			SetSuitUpdate( ply, "DMG3", SUIT_NEXT_IN_1MIN );					-- Blood Toxin Levels Detected.
-			requiresAntitoxin = true
 
-			damageType = bit.band( damageType, bit.bxor( damageType, bit.bor( DMG_POISON, DMG_PARALYZE ) ) );
+		if ( bit.band( damageType, DMG_PARALYZE ) != 0 ) then
+			SetSuitUpdate( ply, "DMG3", SUIT_NEXT_IN_1MIN );					-- Blood-Toxin Levels Detected.
+
+			damageType = bit.band( damageType, bit.bxor( damageType, DMG_PARALYZE ) );
+			damageFound = true;
+		end
+		
+		if ( bit.band( damageType, DMG_POISON ) != 0 ) then
+			SetSuitUpdate( ply, "DMG3", SUIT_NEXT_IN_1MIN );					-- Blood-Toxin Levels Detected.
+			requiresAntidote = true
+
+			damageType = bit.band( damageType, bit.bxor( damageType, DMG_POISON ) );
 			damageFound = true;
 		end
 		
@@ -384,8 +380,8 @@ local function OnTakeDamage( ply, dmginfo )
 		if ( !trivial && major && oldHealth >= 75 ) then
 			SetSuitUpdate( ply, "MED1", SUIT_NEXT_IN_30MIN );					-- Automatic Medical Systems Engaged.
 
-			if ( requiresAntitoxin && ply.suitPlaylistUnused > 0 ) then
-				SetSuitUpdate( ply, "HEAL4", SUIT_NEXT_IN_30MIN );				-- Antitoxin Administered.
+			if ( requiresAntidote && ply.suitPlaylistUnused > 0 ) then
+				SetSuitUpdate( ply, "HEAL5", SUIT_NEXT_IN_30MIN );				-- Antidote Administered.
 			else
 				SetSuitUpdate( ply, "HEAL7", SUIT_NEXT_IN_30MIN );				-- Morphine Administered.
 			end
