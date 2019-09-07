@@ -2,13 +2,13 @@
 // H.E.V. Suit Voice Pack - Black Mesa
 ////////////////////////////////////////////////////////////////
 
-// Medical Systems
+// Automatic Medical Systems
 HEV_BMS_MED1 hev_vox/(p140) boop, boop, boop, (p100) 05_automedic_on {Len 4.92 closecaption HEV.automedic_on}
 
 HEV_BMS_HEAL5 hev_vox/(p140) boop, boop, boop, (p100) hiss, antidote_shot {Len 4.17 closecaption HEV.antidote_shot}
 HEV_BMS_HEAL7 hev_vox/(p140) boop, boop, boop, (p100) hiss, morphine_shot {Len 4.16 closecaption HEV.morphine_shot}
 
-// Damage Monitoring
+// Vital Sign Monitoring
 HEV_BMS_DMG0 hev_vox/(p160) boop, boop, boop, (p100) minor_lacerations {Len 4.09 closecaption HEV.minor_lacerations}
 HEV_BMS_DMG1 hev_vox/(p160) boop, boop, boop, (p100) major_lacerations {Len 4.19 closecaption HEV.major_lacerations}
 HEV_BMS_DMG2 hev_vox/(p160) boop, boop, boop, (p100) internal_bleeding {Len 3.64 closecaption HEV.internal_bleeding}
@@ -18,12 +18,11 @@ HEV_BMS_DMG5 hev_vox/(p160) boop, boop, boop, (p100) major_fracture {Len 3.67 cl
 HEV_BMS_DMG6 hev_vox/(p160) boop, boop, boop, (p100) blood_loss {Len 3.39 closecaption HEV.blood_loss}
 HEV_BMS_DMG7 hev_vox/(p140) boop, boop, boop, (p100) seek_medic {Len 3.92 closecaption HEV.seek_medic}
 
-// User Condition Monitoring
 HEV_BMS_HLTH1 hev_vox/(p120) beep, beep, (p100) health_dropping2 {Len 3.68 closecaption HEV.health_dropping2}
 HEV_BMS_HLTH2 hev_vox/(p120) beep, beep, beep, (p100) health_critical {Len 4.32 closecaption HEV.health_critical}
 HEV_BMS_HLTH3 hev_vox/(p120) beep, beep, beep, (p100) near_death {Len 4.77 closecaption HEV.near_death}
 
-// Battery Power Level
+// High Impact Reactive Armor
 HEV_BMS_1P hev_vox/(p103) fuzz fuzz, (p103) power_restored(e30), ten percent {Len 2.75}
 HEV_BMS_2P hev_vox/(p103) fuzz (p103) fuzz, (p103) power_restored(e30), fifteen percent {Len 3.15}
 HEV_BMS_3P hev_vox/(p103) fuzz fuzz, (p103) power_restored(e30), twenty percent {Len 2.99}
@@ -44,10 +43,10 @@ HEV_BMS_17P hev_vox/(p103) fuzz fuzz, (p103) power_restored(e30), ninety percent
 HEV_BMS_18P hev_vox/(p103) fuzz fuzz, (p103) power_restored(e30), ninety five percent {Len 4.00}
 HEV_BMS_19P hev_vox/(p103) fuzz fuzz, (p103) power_level_is onehundred percent {Len 4.62}
 
-// Ammunition Monitoring
+// Munition Level Monitoring
 HEV_BMS_AMO0 hev_vox/blip ammo_depleted {Len 2.16 closecaption HEV.ammo_depleted}
 
-// Hazardous Element Detection
+// Atmospheric Contaminant Sensors
 HEV_BMS_DET0 hev_vox/blip blip blip, biohazard_detected {Len 3.67 closecaption HEV.biohazard_detected}
 HEV_BMS_DET1 hev_vox/blip blip blip, chemical_detected {Len 4.33 closecaption HEV.chemical_detected}
 HEV_BMS_DET2 hev_vox/blip blip blip, radiation_detected {Len 5.08 closecaption HEV.radiation_detected}

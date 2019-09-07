@@ -2,13 +2,13 @@
 // H.E.V. Suit Voice Pack - Opposing Force
 ////////////////////////////////////////////////////////////////
 
-// Damage Monitoring
+// Vital Sign Monitoring
 HEV_OPFOR_DMG0 fvox/boop
 
 HEV_OPFOR_SHOCK fvox/boop
 HEV_OPFOR_FIRE fvox/boop
 
-// Battery Power Level
+// High Impact Reactive Armor
 HEV_OPFOR_0P fvox/fuzz
 HEV_OPFOR_1P fvox/fuzz
 HEV_OPFOR_2P fvox/fuzz
@@ -30,10 +30,10 @@ HEV_OPFOR_17P fvox/fuzz
 HEV_OPFOR_18P fvox/fuzz
 HEV_OPFOR_19P fvox/fuzz
 
-// Ammunition Monitoring
+// Munition Level Monitoring
 HEV_OPFOR_AMO0 fvox/blip
 
-// Hazardous Element Detection
+// Atmospheric Contaminant Sensors
 HEV_OPFOR_DET0 fvox/blip blip blip
 HEV_OPFOR_DET1 fvox/blip blip blip
 HEV_OPFOR_DET2 fvox/blip blip blip
