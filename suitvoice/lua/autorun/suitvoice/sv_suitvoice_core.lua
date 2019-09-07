@@ -83,7 +83,7 @@ local function ResetSuitPlaylist( ply )
 	ply.suitPlaylist = {};
 	ply.suitPlaylistNoRepeat = {};
 	ply.suitPlaylistNoRepeatTime = {};
-	for i = 0, ply.suitPlaylistMax, 1 do
+	for i = 0, ply.suitPlaylistMax do
 		ply.suitPlaylist[i] = nil;
 		ply.suitPlaylistNoRepeat[i] = nil;
 		ply.suitPlaylistNoRepeatTime[i] = 0.0;
@@ -119,7 +119,7 @@ local function CheckSuitUpdate( ply )
 	if ( CurTime() >= ply.suitUpdateTime && ply.suitUpdateTime > 0 ) then
 		local search = ply.suitPlaylistNext;
 		local sentence = nil;
-		for i = 0, ply.suitPlaylistMax, 1 do
+		for i = 0, ply.suitPlaylistMax do
 			sentence = ply.suitPlaylist[search];
 			if ( sentence != nil ) then
 				break;
@@ -163,7 +163,7 @@ function SetSuitUpdate( ply, sentence, norepeattime )
 	end
 
 	local empty = -1
-	for i = 0, ply.suitPlaylistMax, 1 do
+	for i = 0, ply.suitPlaylistMax do
 		if ( sentence == ply.suitPlaylistNoRepeat[i] ) then
 			if ( ply.suitPlaylistNoRepeatTime[i] < CurTime() ) then
 				ply.suitPlaylistNoRepeat[i] = nil;
@@ -422,10 +422,27 @@ end
 hook.Add( "PlayerCanPickupItem", "SuitVoice_ItemPickup", ItemPickup );
 
 function SuitUpdateReset( ply )
-	if ( ply:IsAdmin() ) then
-		for _, ply in ipairs( player.GetAll() ) do
-			ResetSuitPlaylist( ply );
+	if ( ply != nil && !ply:IsAdmin() ) then
+		return;
+	end
+
+	for _, ply in ipairs( player.GetAll() ) do
+		ResetSuitPlaylist( ply );
+	end
+end
+concommand.Add( "suitvoice_reset", SuitUpdateReset, nil, "Resets the suit voice of all players on the server." );
+
+function SuitUpdateSpeak( ply, cmd, args )
+	if ( ply != nil && !ply:IsAdmin() ) then
+		return;
+	end
+
+	if ( ply != nil ) then
+		SetSuitUpdate( ply, args[1], args[2] );
+	else
+		for _, plyOther in ipairs( player.GetAll() ) do
+			SetSuitUpdate( plyOther, args[1], args[2] );
 		end
 	end
 end
-concommand.Add( "suitvoice_reset", SuitUpdateReset, "Resets the suit voice of all players on the server." );
+concommand.Add( "suitvoice_speak", SuitUpdateSpeak, nil, "Speaks a suit voice line." );
