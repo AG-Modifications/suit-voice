@@ -115,7 +115,7 @@ local function UTIL_EmitSoundSuit( ent, sentence )
 
 	if ( volume > 0.05 ) then
 		local sentencePrefix = string.upper( ent.suitPlaylistPack ) .. "_";
-		if ( game.IsDedicated() ) then
+		if ( !game.SinglePlayer() ) then
 			sentencePrefix = "";
 		end
 

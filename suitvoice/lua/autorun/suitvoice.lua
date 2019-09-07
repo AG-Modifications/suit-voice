@@ -11,8 +11,8 @@ function RegisterSuitVoicePack( name, value, sentences )
     } } )
 end
 
-if ( game.IsDedicated() ) then
-    print( "Custom H.E.V. Suit voice packs can't support Dedicated Servers without assistance from Facepunch..." );
+if ( !game.SinglePlayer() ) then
+    print( "Custom H.E.V. Suit voice packs can't support remote servers without assistance from Facepunch..." );
     print( "If you can, tell them to add a 'PrecacheSentenceFile' Lua binding to client!" );
 else
     -- Check to see if there's any addon packs.
