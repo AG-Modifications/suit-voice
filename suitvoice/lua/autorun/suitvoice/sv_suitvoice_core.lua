@@ -123,8 +123,9 @@ local function UTIL_EmitSoundSuit( ent, sentence )
 	end
 end
 
--- Runs and constantly checks to see if a voiceline is queued up.
+-- Play a suit update if it's time to.
 local function CheckSuitUpdate( ply )
+	-- Ignore suit updates if this player has no suit or disabled the playlist altogether.
 	if ( ply.suitPlaylistEnabled < 1 || !ply:IsSuitEquipped() ) then
 		return;
 	end
@@ -135,6 +136,7 @@ local function CheckSuitUpdate( ply )
 	end
 
 	if ( CurTime() >= ply.suitUpdateTime && ply.suitUpdateTime > 0 ) then
+		-- Play a sentence off at the end of the queue.
 		local search = ply.suitPlaylistNext;
 		local sentence = nil;
 		for i = 0, ply.suitPlaylistMax do
@@ -150,10 +152,12 @@ local function CheckSuitUpdate( ply )
 		end
 
 		if ( sentence != nil ) then
+			-- Play the sentence from the player.
 			ply.suitPlaylist[search] = nil;
 			UTIL_EmitSoundSuit( ply, sentence );
 			ply.suitUpdateTime = CurTime() + SUIT_UPDATE_TIME;
 		else
+			-- Queue is empty, don't check.
 			ply.suitUpdateTime = 0;
 		end
 	end
@@ -169,7 +173,7 @@ local function Damage_IsTimeBased( damageType )
 	end
 end
 
--- Queues up a new voiceline to be played.
+-- Adds a sentence to suit playlist queue.
 function SetSuitUpdate( ply, sentence, norepeattime )
 	if ( sentence == nil ) then
 		return;
@@ -180,26 +184,35 @@ function SetSuitUpdate( ply, sentence, norepeattime )
 		return;
 	end
 
+	-- Check norepeat list - this list lets us cancel
+	-- the playback of words or sentences that have already
+	-- been played within a certain time.
 	local empty = -1
 	for i = 0, ply.suitPlaylistMax do
 		if ( sentence == ply.suitPlaylistNoRepeat[i] ) then
+			-- This sentence or group is already in the norepeat list.
 			if ( ply.suitPlaylistNoRepeatTime[i] < CurTime() ) then
+				-- The norepeattime has expired, clear it out.
 				ply.suitPlaylistNoRepeat[i] = nil;
 				ply.suitPlaylistNoRepeatTime[i] = 0.0;
 				empty = i;
 				break;
 			else
+				-- Don't play, this sentence is still marked with a norepeattime.
 				return;
 			end
 		end
 
+		-- Keep track of an empty slot
 		if ( ply.suitPlaylistNoRepeat[i] == nil ) then
 			empty = i;
 		end
 	end
 
+	-- Sentence was not found in the norepeattime list, add it if norepeattime was given.
 	if ( norepeattime ) then
 		if ( empty < 0 ) then
+			-- Pick a random slot to take over.
 			empty = math.random( 0, ply.suitPlaylistMax - 1 );
 		end
 
@@ -207,6 +220,7 @@ function SetSuitUpdate( ply, sentence, norepeattime )
 		ply.suitPlaylistNoRepeatTime[empty] = norepeattime + CurTime();
 	end
 
+	-- Find an empty spot in the queue, or overwrite last spot.
 	ply.suitPlaylist[ply.suitPlaylistNext] = sentence;
 	ply.suitPlaylistNext = ply.suitPlaylistNext + 1;
 	if ( ply.suitPlaylistNext == ply.suitPlaylistMax ) then
@@ -215,6 +229,7 @@ function SetSuitUpdate( ply, sentence, norepeattime )
 
 	if ( ply.suitUpdateTime <= CurTime() ) then
 		if ( ply.suitUpdateTime == 0 ) then
+			-- Play queue is empty, don't delay for too long before playback.
 			ply.suitUpdateTime = CurTime() + SUIT_FIRST_UPDATE_TIME;
 		else
 			ply.suitUpdateTime = CurTime() + SUIT_UPDATE_TIME;
@@ -236,8 +251,16 @@ local function OnTakeDamage( ply, dmginfo )
 		ratio = OLD_ARMOR_RATIO;
 	end
 
+	if ( bit.band( damageType, DMG_BLAST ) && !game.SinglePlayer() ) then
+		-- Blasts damage armor more.
+		bonus = bonus * 2;
+	end
+
+	-- Keep track of amount of damage last sustained.
 	local lastDamage = dmginfo:GetDamage();
 	local damageType = dmginfo:GetDamageType();
+
+	-- Armor doesn't protect against fall or drown damage!
 	if ( ply:Armor() > 0 && bit.band( damageType, bit.bor( DMG_FALL, DMG_DROWN, DMG_POISON, DMG_RADIATION ) ) == 0 ) then
 		local new = lastDamage * ratio;
 		local armor = ( lastDamage - new ) * bonus;
@@ -260,10 +283,13 @@ local function OnTakeDamage( ply, dmginfo )
 	local oldHealth = ply:Health();
 	local newHealth = oldHealth - lastDamage;
 
+	-- How bad is it, doc?
 	local trivial = ( newHealth > 75 || lastDamage < 5 );
 	local major = ( dmginfo:GetDamage() > 25 );
 	local critical = ( newHealth < 30 );
 	
+	-- Handle all bits set in this damage message,
+	-- let the suit give player the diagnosis.
 	local damageFound = true;
 	local requiresAntidote = false;
 	while ( lastDamage && ( !trivial || Damage_IsTimeBased( damageType ) ) && damageFound && damageType ) do
@@ -386,6 +412,8 @@ local function OnTakeDamage( ply, dmginfo )
 
 	if ( lastDamage > 0 ) then
 		if ( !trivial && major && oldHealth >= 75 ) then
+			-- First time we take major damage,
+			-- turn automedic on if not on.
 			SetSuitUpdate( ply, "MED1", SUIT_NEXT_IN_30MIN );					-- Automatic Medical Systems Engaged.
 
 			if ( requiresAntidote && ply.suitPlaylistUnused > 0 ) then
@@ -397,17 +425,20 @@ local function OnTakeDamage( ply, dmginfo )
 
 		if ( oldHealth < 75 ) then
 			if ( !trivial && critical ) then
+				-- Already took major damage, now it's critical...
 				if ( newHealth < 6 ) then
 					SetSuitUpdate( ply, "HLTH3", SUIT_NEXT_IN_10MIN );			-- Emergency, User Death Imminent.
 				elseif ( newHealth < 20 ) then
 					SetSuitUpdate( ply, "HLTH2", SUIT_NEXT_IN_10MIN );			-- Vital Signs Critical.
 				end
 
+				-- Give critical health warnings.
 				if ( math.random( 0, 3 ) == 0 && oldHealth < 50 ) then
 					SetSuitUpdate( ply, "DMG7", SUIT_NEXT_IN_5MIN );			-- Seek Medical Attention.
 				end
 			end
 
+			-- If we're taking time based damage, warn about its continuing effects.
 			if ( Damage_IsTimeBased( dmginfo:GetDamageType() ) ) then
 				if ( oldHealth < 50 ) then
 					if ( math.random( 0, 3 ) == 0 ) then
