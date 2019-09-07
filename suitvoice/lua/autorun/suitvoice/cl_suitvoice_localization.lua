@@ -2,6 +2,7 @@
 
 local currentLang = GetConVar( "gmod_language" ):GetString();
 local langFile = "resource/localization/%s/suitvoice.properties";
+resource.AddSingleFile( langFile );
 
 local BaseLanguageChanged = LanguageChanged;
 function LanguageChanged( lang )

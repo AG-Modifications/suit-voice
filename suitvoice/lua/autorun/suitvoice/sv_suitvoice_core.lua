@@ -76,6 +76,19 @@ local function ResetSuitPlaylist( ply )
 		ply.suitPlaylistMax = ply:GetInfoNum( "suitvoice_max", 4 );
 	end
 
+	-- Check if they're using a valid voice pack, and if not, default them to Half-Life.
+	local hasVoicePack = false;
+	for _, v in pairs( suitVoicePacks ) do
+		if ( ply.suitPlaylistPack == v.value ) then
+			hasVoicePack = true;
+        	break;
+        end
+	end
+	
+	if ( hasVoicePack == false ) then
+		ply.suitPlaylistPack = "hl";
+	end
+
 	SetupServerOverrides( ply );
 
 	ply.suitUpdateTime = 0;

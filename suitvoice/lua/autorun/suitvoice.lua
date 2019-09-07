@@ -2,6 +2,12 @@
 -- Original Code: Valve
 -- Lua Port: Agent Agrimar
 
+if ( game.IsDedicated() ) then
+    print( "H.E.V. Suit Voice doesn't and can't support Dedicated Servers without assistance from Facepunch..." );
+    print( "If you can, tell them to add a 'PrecacheSentenceFile' Lua binding to client!" );
+    return;
+end
+
 suitVoicePacks = {};
 function RegisterSuitVoicePack( name, value, sentences )
     table.Add( suitVoicePacks, { {
@@ -82,7 +88,7 @@ local function CheckVoicePackConVar( value )
     end
 
     for _, v in pairs( suitVoicePacks ) do
-        if ( v.value == value ) then
+        if ( value == v.value ) then
             return;
         end
     end
