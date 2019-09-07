@@ -1,12 +1,12 @@
 --[[ Hazardous EnVironment Suit Voice Module ]]
 
 -- ConVars
-local suitvoice_enabled_override			= CreateConVar( "suitvoice_enabled_override", "-1", FCVAR_NOTIFY, "Enables the H.E.V. Suit voice module. -1 = Per-Player Choice" );
-local suitvoice_counting_override 			= CreateConVar( "suitvoice_counting_override", "-1", FCVAR_NOTIFY, "Enables counting H.E.V. Suit voice lines. -1 = Per-Player Choice" );
-local suitvoice_unused_override 			= CreateConVar( "suitvoice_unused_override", "-1", FCVAR_NOTIFY, "Enables unused H.E.V. Suit voice lines. -1 = Per-Player Choice" );
-local suitvoice_extra_override 				= CreateConVar( "suitvoice_extra_override", "-1", FCVAR_NOTIFY, "Enables extra H.E.V. Suit voice lines. -1 = Per-Player Choice" );
-local suitvoice_pack_override				= CreateConVar( "suitvoice_pack_override", "", FCVAR_NOTIFY, "Sets the H.E.V. Suit to use this voice pack. \"\" = Per-Player Choice" );
-local suitvoice_max_override 				= CreateConVar( "suitvoice_max_override", "-1", FCVAR_NOTIFY, "Specifies the maximum amount of H.E.V. Suit voice lines that can be queued. -1 = Per-Player Choice" );
+suitvoice_enabled_override					= CreateConVar( "suitvoice_enabled_override", "-1", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Enables the H.E.V. Suit voice module. -1 = Per-Player Choice" );
+suitvoice_counting_override 				= CreateConVar( "suitvoice_counting_override", "-1", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Enables counting H.E.V. Suit voice lines. -1 = Per-Player Choice" );
+suitvoice_unused_override 					= CreateConVar( "suitvoice_unused_override", "-1", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Enables unused H.E.V. Suit voice lines. -1 = Per-Player Choice" );
+suitvoice_extra_override 					= CreateConVar( "suitvoice_extra_override", "-1", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Enables extra H.E.V. Suit voice lines. -1 = Per-Player Choice" );
+suitvoice_pack_override						= CreateConVar( "suitvoice_pack_override", "", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Sets the H.E.V. Suit to use this voice pack. \"\" = Per-Player Choice" );
+suitvoice_max_override 						= CreateConVar( "suitvoice_max_override", "-1", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Specifies the maximum amount of H.E.V. Suit voice lines that can be queued. -1 = Per-Player Choice" );
 
 -- Referenced ConVars
 local suitvolume							= GetConVar( "suitvolume" );
@@ -30,16 +30,6 @@ SUIT_NEXT_IN_10MIN							= 600;
 SUIT_NEXT_IN_30MIN							= 1800;
 SUIT_NEXT_IN_1HOUR							= 3600;
 
--- Checks to see if an invalid pack was set, just incase it's been deleted.
-cvars.AddChangeCallback( "suitvoice_pack_override", function( _, _, new )
-    for _, v in pairs( suitVoicePacks ) do
-        if ( v.value == new ) then
-            return;
-        end
-    end
-
-    suitvoice_pack_override:SetString( suitvoice_pack_override:GetDefault() );
-end )
 
 -- Allows server operators to set global overrides.
 local function SetupServerOverrides( ply )
@@ -432,3 +422,12 @@ local function ItemPickup( ply, item )
 	return;
 end
 hook.Add( "PlayerCanPickupItem", "SuitVoice_ItemPickup", ItemPickup );
+
+function SuitUpdateReset( ply )
+	if ( ply:IsAdmin() ) then
+		for _, ply in ipairs( player.GetAll() ) do
+			ResetSuitPlaylist( ply );
+		end
+	end
+end
+concommand.Add( "suitvoice_reset", SuitUpdateReset, "Resets the suit voice of all players on the server." );
