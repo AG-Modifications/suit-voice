@@ -408,18 +408,16 @@ hook.Add( "EntityTakeDamage", "SuitVoice_OnTakeDamage", OnTakeDamage );
 
 -- Used for counting battery levels on pickup.
 local function ItemPickup( ply, item )
-	if ( ply.suitPlaylistCounting > 0 && item:GetClass() == "item_battery" ) then
-		if ( ply:Armor() < 100 && ply:IsSuitEquipped() ) then
-			local batteryLevel = ( ( ply:Armor() + sk_battery:GetInt() ) * 100.0 ) * ( 1.0 / MAX_NORMAL_BATTERY ) + 0.5;
-			batteryLevel = math.Clamp( math.floor( batteryLevel / 5 ), 0, 20 );
+	if ( ply.suitPlaylistCounting > 0 && ( item:GetClass() == "item_battery" || item:GetClass() == "hl1_item_battery" ) ) then
+		if ( ply:Armor() < MAX_NORMAL_BATTERY && ply:IsSuitEquipped() ) then
+			local batteryLevel = ( math.min( ply:Armor() + sk_battery:GetInt(), MAX_NORMAL_BATTERY ) * 100.0 ) * ( 1.0 / MAX_NORMAL_BATTERY ) + 0.5;
+			batteryLevel = math.floor( batteryLevel / 5 );
 			if ( batteryLevel > 0 ) then
 				batteryLevel = batteryLevel - 1;
 			end
 			SetSuitUpdate( ply, batteryLevel .. "P", SUIT_NEXT_IN_30SEC );
 		end
 	end
-
-	return;
 end
 hook.Add( "PlayerCanPickupItem", "SuitVoice_ItemPickup", ItemPickup );
 
