@@ -421,24 +421,54 @@ local function ItemPickup( ply, item )
 end
 hook.Add( "PlayerCanPickupItem", "SuitVoice_ItemPickup", ItemPickup );
 
-function SuitUpdateReset( ply )
+
+-- Console Commands
+
+-- Little utility.
+local function GetTargetedPlayer( ply, id )
+	-- I think it's possible that someone could have the same number for
+	-- any of these three ID identifiers, but for now we'll assume that they're all different.
+	local targetedPlayer = ply;
+	if ( id != nil ) then
+		targetedPlayer = player.GetBySteamID64( id );
+		if ( targetedPlayer == false ) then
+			targetedPlayer = player.GetBySteamID( id );
+			if ( targetedPlayer == false ) then
+				targetedPlayer = player.GetByID( id );
+				if ( targetedPlayer == nil ) then
+					targetedPlayer = ply;
+				end
+			end
+		end
+	end
+
+	return targetedPlayer;
+end
+
+function SuitUpdateReset( ply, _, args )
 	if ( ply != nil && !ply:IsAdmin() ) then
 		return;
 	end
 
-	for _, ply in ipairs( player.GetAll() ) do
-		ResetSuitPlaylist( ply );
+	local targetedPlayer = GetTargetedPlayer( ply, args[1] );
+	if ( targetedPlayer != nil ) then
+		ResetSuitPlaylist( targetedPlayer );
+	else
+		for _, plyOther in ipairs( player.GetAll() ) do
+			ResetSuitPlaylist( plyOther );
+		end
 	end
 end
-concommand.Add( "suitvoice_reset", SuitUpdateReset, nil, "Resets the suit voice of all players on the server." );
+concommand.Add( "suitvoice_reset", SuitUpdateReset, nil, "Resets the suit voice system." );
 
-function SuitUpdateSpeak( ply, cmd, args )
+function SuitUpdateSpeak( ply, _, args )
 	if ( ply != nil && !ply:IsAdmin() ) then
 		return;
 	end
 
-	if ( ply != nil ) then
-		SetSuitUpdate( ply, args[1], args[2] );
+	local targetedPlayer = GetTargetedPlayer( ply, args[3] );
+	if ( targetedPlayer != nil ) then
+		SetSuitUpdate( targetedPlayer, args[1], args[2] );
 	else
 		for _, plyOther in ipairs( player.GetAll() ) do
 			SetSuitUpdate( plyOther, args[1], args[2] );
