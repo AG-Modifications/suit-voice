@@ -114,7 +114,12 @@ local function UTIL_EmitSoundSuit( ent, sentence )
 	end
 
 	if ( volume > 0.05 ) then
-		EmitSentence( "HEV_" .. string.upper( ent.suitPlaylistPack ) .. "_" .. sentence, ent:GetPos(), ent:EntIndex(), ( game:SinglePlayer() && CHAN_STATIC || CHAN_AUTO ), volume, 75, 0, pitch );
+		local sentencePrefix = string.upper( ent.suitPlaylistPack ) .. "_";
+		if ( game.IsDedicated() ) then
+			sentencePrefix = "";
+		end
+
+		EmitSentence( "HEV_" .. sentencePrefix .. sentence, ent:GetPos(), ent:EntIndex(), ( game:SinglePlayer() && CHAN_STATIC || CHAN_AUTO ), volume, 75, 0, pitch );
 	end
 end
 
