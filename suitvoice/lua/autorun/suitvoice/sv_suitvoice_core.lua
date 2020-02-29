@@ -250,15 +250,15 @@ local function OnTakeDamage( ply, dmginfo )
 		bonus = OLD_ARMOR_BONUS;
 		ratio = OLD_ARMOR_RATIO;
 	end
+	
+	-- Keep track of amount of damage last sustained.
+	local lastDamage = dmginfo:GetDamage();
+	local damageType = dmginfo:GetDamageType();
 
 	if ( bit.band( damageType, DMG_BLAST ) && !game.SinglePlayer() ) then
 		-- Blasts damage armor more.
 		bonus = bonus * 2;
 	end
-
-	-- Keep track of amount of damage last sustained.
-	local lastDamage = dmginfo:GetDamage();
-	local damageType = dmginfo:GetDamageType();
 
 	-- Armor doesn't protect against fall or drown damage!
 	if ( ply:Armor() > 0 && bit.band( damageType, bit.bor( DMG_FALL, DMG_DROWN, DMG_POISON, DMG_RADIATION ) ) == 0 ) then
