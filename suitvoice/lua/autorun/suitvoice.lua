@@ -14,7 +14,7 @@ function RegisterSuitVoicePack( name, value, sentences )
 end
 
 -- Check to see if there's any addon packs.
- local files, directories = file.Find( "autorun/suitvoice/packs/*.lua", "LUA" );
+ local files, directories = file.Find( "suitvoice/packs/*.lua", "LUA" );
  for _, luaPackFile in pairs( files ) do
      include( "suitvoice/packs/" .. luaPackFile );
      if SERVER then
@@ -46,7 +46,7 @@ end
      for _, sentencePackFile in pairs( files ) do
          -- If we find the same file here, then we're using the loose one instead.
          if ( !file.Exists( "suitvoice/packs/loose/" .. sentencePackFile, "DATA" ) ) then
-             if ( file.Exists( "autorun/suitvoice/packs/" .. string.StripExtension( sentencePackFile ) .. ".lua", "LUA" ) ) then
+             if ( file.Exists( "suitvoice/packs/" .. string.StripExtension( sentencePackFile ) .. ".lua", "LUA" ) ) then
                  PrecacheSentenceFile( "data/suitvoice/packs/" .. sentencePackFile );
              end
          end

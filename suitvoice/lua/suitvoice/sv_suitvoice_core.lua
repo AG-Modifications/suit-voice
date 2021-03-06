@@ -70,12 +70,12 @@ local function ResetSuitPlaylist( ply )
 		ply.suitPlaylistPack = "hl";
 		ply.suitPlaylistMax = 4;
 	else
-		ply.suitPlaylistEnabled = ply:GetInfoNum( "suitvoice_enabled", 1 );
-		ply.suitPlaylistCounting = ply:GetInfoNum( "suitvoice_counting", 0 );
-		ply.suitPlaylistUnused = ply:GetInfoNum( "suitvoice_unused", 0 );
-		ply.suitPlaylistExtra = ply:GetInfoNum( "suitvoice_extra", 0 );
-		ply.suitPlaylistPack = ply:GetInfo( "suitvoice_pack" );
-		ply.suitPlaylistMax = ply:GetInfoNum( "suitvoice_max", 4 );
+		ply.suitPlaylistEnabled = ply:GetInfoNum( "cl_suitvoice_enabled", 1 );
+		ply.suitPlaylistCounting = ply:GetInfoNum( "cl_suitvoice_counting", 0 );
+		ply.suitPlaylistUnused = ply:GetInfoNum( "cl_suitvoice_unused", 0 );
+		ply.suitPlaylistExtra = ply:GetInfoNum( "cl_suitvoice_extra", 0 );
+		ply.suitPlaylistPack = ply:GetInfo( "cl_suitvoice_pack" );
+		ply.suitPlaylistMax = ply:GetInfoNum( "cl_suitvoice_max", 4 );
 	end
 
 	-- Check if they're using a valid voice pack, and if not, default them to Half-Life.
