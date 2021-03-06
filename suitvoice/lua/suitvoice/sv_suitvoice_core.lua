@@ -62,11 +62,12 @@ end
 
 -- Reset a player's suit voice.
 local function ResetSuitPlaylist( ply )
+	-- Apply settings on a per-client basis, or setup some defaults if they're a bot.
 	if ( ply:IsBot() ) then
 		ply.suitPlaylistEnabled = 1;
 		ply.suitPlaylistCounting = 0;
-		ply.suitPlaylistUnused = 1;
-		ply.suitPlaylistExtra = 1;
+		ply.suitPlaylistUnused = 0;
+		ply.suitPlaylistExtra = 0;
 		ply.suitPlaylistPack = "hl";
 		ply.suitPlaylistMax = 4;
 	else
@@ -107,6 +108,11 @@ local function ResetSuitPlaylist( ply )
 	ply.activeWeapon = nil;
 	ply.ammoPrimaryEmpty = false;
 	ply.ammoSecondaryEmpty = false;
+
+	-- Play the short logon sound.
+	if ( ply:IsSuitEquipped() ) then
+		SetSuitUpdate( ply, "A0", SUIT_NEXT_IMMEDIATELY );
+	end
 end
 hook.Add( "PlayerSpawn", "SuitVoice_Spawn", ResetSuitPlaylist );
 hook.Add( "PlayerDeath", "SuitVoice_Death", ResetSuitPlaylist );
