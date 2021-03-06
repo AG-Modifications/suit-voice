@@ -67,11 +67,6 @@ elseif CLIENT then
     include( "suitvoice/cl_suitvoice_options.lua" );
 end
 
-local packConVar = suitvoice_pack;
-if SERVER then
-    packConVar = suitvoice_pack_override;
-end
-
 -- Checks to see if an invalid pack was set, just incase it's been deleted.
 local function CheckVoicePackConVar( value )
     if SERVER then
@@ -86,10 +81,10 @@ local function CheckVoicePackConVar( value )
         end
     end
 
-    packConVar:SetString( packConVar:GetDefault() );
+    suitvoice_pack:SetString( suitvoice_pack:GetDefault() );
 end
 
-CheckVoicePackConVar( packConVar:GetString() );
-cvars.AddChangeCallback( packConVar:GetName(), function( _, _, new )
+CheckVoicePackConVar( suitvoice_pack:GetString() );
+cvars.AddChangeCallback( suitvoice_pack:GetName(), function( _, _, new )
     CheckVoicePackConVar( new );
 end )

@@ -1,12 +1,12 @@
 --[[ Hazardous EnVironment Suit Voice Module ]]
 
 -- ConVars
-suitvoice_enabled_override					= CreateConVar( "sv_suitvoice_enabled", "-1", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Enables the H.E.V. Suit voice module. -1 = Use Client Value" );
-suitvoice_counting_override 				= CreateConVar( "sv_suitvoice_counting", "-1", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Enables counting H.E.V. Suit voice lines. -1 = Use Client Value" );
-suitvoice_unused_override 					= CreateConVar( "sv_suitvoice_unused", "-1", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Enables unused H.E.V. Suit voice lines. -1 = Use Client Value" );
-suitvoice_extra_override 					= CreateConVar( "sv_suitvoice_extra", "-1", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Enables extra H.E.V. Suit voice lines. -1 = Use Client Value" );
-suitvoice_pack_override						= CreateConVar( "sv_suitvoice_pack", "", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Sets the H.E.V. Suit to use this voice pack. \"\" = Use Client Value" );
-suitvoice_max_override 						= CreateConVar( "sv_suitvoice_max", "-1", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Specifies the maximum amount of H.E.V. Suit voice lines that can be queued. -1 = Use Client Value" );
+suitvoice_enabled							= CreateConVar( "sv_suitvoice_enabled", "-1", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Enables the H.E.V. Suit voice module. -1 = Use Client Value" );
+suitvoice_counting 							= CreateConVar( "sv_suitvoice_counting", "-1", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Enables counting H.E.V. Suit voice lines. -1 = Use Client Value" );
+suitvoice_unused 							= CreateConVar( "sv_suitvoice_unused", "-1", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Enables unused H.E.V. Suit voice lines. -1 = Use Client Value" );
+suitvoice_extra 							= CreateConVar( "sv_suitvoice_extra", "-1", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Enables extra H.E.V. Suit voice lines. -1 = Use Client Value" );
+suitvoice_pack								= CreateConVar( "sv_suitvoice_pack", "", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Sets the H.E.V. Suit to use this voice pack. \"\" = Use Client Value" );
+suitvoice_max 								= CreateConVar( "sv_suitvoice_max", "-1", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Specifies the maximum amount of H.E.V. Suit voice lines that can be queued. -1 = Use Client Value" );
 
 -- Referenced ConVars
 local suitvolume							= GetConVar( "suitvolume" );
@@ -35,28 +35,28 @@ SUIT_NEXT_IN_1HOUR							= 3600;
 
 -- Allows server operators to set global overrides.
 local function SetupServerOverrides( ply )
-	if ( suitvoice_enabled_override:GetInt() >= 0 ) then
-		ply.suitPlaylistEnabled = suitvoice_enabled_override:GetInt();
+	if ( suitvoice_enabled:GetInt() >= 0 ) then
+		ply.suitPlaylistEnabled = suitvoice_enabled:GetInt();
 	end
 
-	if ( suitvoice_counting_override:GetInt() >= 0 ) then
-		ply.suitPlaylistCounting = suitvoice_counting_override:GetInt();
+	if ( suitvoice_counting:GetInt() >= 0 ) then
+		ply.suitPlaylistCounting = suitvoice_counting:GetInt();
 	end
 
-	if ( suitvoice_unused_override:GetInt() >= 0 ) then
-		ply.suitPlaylistUnused = suitvoice_unused_override:GetInt();
+	if ( suitvoice_unused:GetInt() >= 0 ) then
+		ply.suitPlaylistUnused = suitvoice_unused:GetInt();
 	end
 
-	if ( suitvoice_extra_override:GetInt() >= 0 ) then
-		ply.suitPlaylistExtra = suitvoice_extra_override:GetInt();
+	if ( suitvoice_extra:GetInt() >= 0 ) then
+		ply.suitPlaylistExtra = suitvoice_extra:GetInt();
 	end
 
-	if ( suitvoice_pack_override:GetString() != "" ) then
-		ply.suitPlaylistPack = suitvoice_pack_override:GetString();
+	if ( suitvoice_pack:GetString() != "" ) then
+		ply.suitPlaylistPack = suitvoice_pack:GetString();
 	end
 
-	if ( suitvoice_max_override:GetInt() >= 0 ) then
-		ply.suitPlaylistMax = suitvoice_max_override:GetInt();
+	if ( suitvoice_max:GetInt() >= 0 ) then
+		ply.suitPlaylistMax = suitvoice_max:GetInt();
 	end
 end
 
