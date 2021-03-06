@@ -2,6 +2,10 @@
 // H.E.V. Suit Voice Pack - Half-Life (Minimal)
 ////////////////////////////////////////////////////////////////
 
+// Initialization
+HEV_HLMIN_AAx fvox/bell
+HEV_HLMIN_A0 fvox/bell
+
 // Automatic Medical Systems
 HEV_HLMIN_MED1 hl1/fvox/(p140) boop, boop, boop {Len 4.92 closecaption HEV.automedic_on}
 

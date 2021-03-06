@@ -1,12 +1,12 @@
 --[[ Hazardous EnVironment Suit Voice Module ]]
 
 -- ConVars
-suitvoice_enabled_override					= CreateConVar( "suitvoice_enabled_override", "-1", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Enables the H.E.V. Suit voice module. -1 = Per-Player Choice" );
-suitvoice_counting_override 				= CreateConVar( "suitvoice_counting_override", "-1", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Enables counting H.E.V. Suit voice lines. -1 = Per-Player Choice" );
-suitvoice_unused_override 					= CreateConVar( "suitvoice_unused_override", "-1", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Enables unused H.E.V. Suit voice lines. -1 = Per-Player Choice" );
-suitvoice_extra_override 					= CreateConVar( "suitvoice_extra_override", "-1", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Enables extra H.E.V. Suit voice lines. -1 = Per-Player Choice" );
-suitvoice_pack_override						= CreateConVar( "suitvoice_pack_override", "", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Sets the H.E.V. Suit to use this voice pack. \"\" = Per-Player Choice" );
-suitvoice_max_override 						= CreateConVar( "suitvoice_max_override", "-1", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Specifies the maximum amount of H.E.V. Suit voice lines that can be queued. -1 = Per-Player Choice" );
+suitvoice_enabled_override					= CreateConVar( "sv_suitvoice_enabled", "-1", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Enables the H.E.V. Suit voice module. -1 = Use Client Value" );
+suitvoice_counting_override 				= CreateConVar( "sv_suitvoice_counting", "-1", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Enables counting H.E.V. Suit voice lines. -1 = Use Client Value" );
+suitvoice_unused_override 					= CreateConVar( "sv_suitvoice_unused", "-1", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Enables unused H.E.V. Suit voice lines. -1 = Use Client Value" );
+suitvoice_extra_override 					= CreateConVar( "sv_suitvoice_extra", "-1", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Enables extra H.E.V. Suit voice lines. -1 = Use Client Value" );
+suitvoice_pack_override						= CreateConVar( "sv_suitvoice_pack", "", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Sets the H.E.V. Suit to use this voice pack. \"\" = Use Client Value" );
+suitvoice_max_override 						= CreateConVar( "sv_suitvoice_max", "-1", bit.bor( FCVAR_ARCHIVE, FCVAR_NOTIFY ), "Specifies the maximum amount of H.E.V. Suit voice lines that can be queued. -1 = Use Client Value" );
 
 -- Referenced ConVars
 local suitvolume							= GetConVar( "suitvolume" );
@@ -15,14 +15,16 @@ local sk_battery							= GetConVar( "sk_battery" );
 local old_armor								= GetConVar( "player_old_armor" );
 
 -- Constants
-local OLD_ARMOR_RATIO 						= 0.2
-local OLD_ARMOR_BONUS						= 0.5
-local ARMOR_RATIO							= 0.2
-local ARMOR_BONUS							= 1.0
+local OLD_ARMOR_RATIO 						= 0.2;
+local OLD_ARMOR_BONUS						= 0.5;
+local ARMOR_RATIO							= 0.2;
+local ARMOR_BONUS							= 1.0;
+local SF_SUIT_SHORTLOGON					= 0x0001;
 
 local MAX_NORMAL_BATTERY					= 100;
 local SUIT_FIRST_UPDATE_TIME				= 0.1;
 local SUIT_UPDATE_TIME						= 3.5;
+SUIT_NEXT_IMMEDIATELY						= 0;
 SUIT_NEXT_IN_30SEC							= 30;
 SUIT_NEXT_IN_1MIN							= 60;
 SUIT_NEXT_IN_5MIN							= 300;
@@ -101,6 +103,10 @@ local function ResetSuitPlaylist( ply )
 		ply.suitPlaylistNoRepeat[i] = nil;
 		ply.suitPlaylistNoRepeatTime[i] = 0.0;
 	end
+
+	ply.activeWeapon = nil;
+	ply.ammoPrimaryEmpty = false;
+	ply.ammoSecondaryEmpty = false;
 end
 hook.Add( "PlayerSpawn", "SuitVoice_Spawn", ResetSuitPlaylist );
 hook.Add( "PlayerDeath", "SuitVoice_Death", ResetSuitPlaylist );
@@ -115,11 +121,7 @@ local function UTIL_EmitSoundSuit( ent, sentence )
 
 	if ( volume > 0.05 ) then
 		local sentencePrefix = string.upper( ent.suitPlaylistPack ) .. "_";
-		if ( !game.SinglePlayer() ) then
-			sentencePrefix = "";
-		end
-
-		EmitSentence( "HEV_" .. sentencePrefix .. sentence, ent:GetPos(), ent:EntIndex(), ( game:SinglePlayer() && CHAN_STATIC || CHAN_AUTO ), volume, 75, 0, pitch );
+		EmitSentence( "HEV_" .. sentencePrefix .. sentence, ent:GetPos(), ent:EntIndex(), CHAN_STATIC, volume, 75, 0, pitch );
 	end
 end
 
@@ -136,7 +138,7 @@ local function CheckSuitUpdate( ply )
 	end
 
 	if ( CurTime() >= ply.suitUpdateTime && ply.suitUpdateTime > 0 ) then
-		-- Play a sentence off at the end of the queue.
+		-- Play a sentence at the end of the queue.
 		local search = ply.suitPlaylistNext;
 		local sentence = nil;
 		for i = 0, ply.suitPlaylistMax do
@@ -160,6 +162,34 @@ local function CheckSuitUpdate( ply )
 			-- Queue is empty, don't check.
 			ply.suitUpdateTime = 0;
 		end
+	end
+
+	-- Warn if the ammo for their current weapon is empty.
+	-- NOTE: This isn't accurate to the original code, 
+	-- but it's the best way to do this at the moment.
+	if ( ply.activeWeapon != nil ) then
+		local ammoType = ply.activeWeapon:GetPrimaryAmmoType();
+		if ( ammoType != -1 && ply.activeWeapon:Clip1() <= 0 && ply:GetAmmoCount( ammoType ) == 0 ) then
+			if ( ply.ammoPrimaryEmpty == false ) then
+				SetSuitUpdate( ply, "AMO0", SUIT_NEXT_IMMEDIATELY );
+				ply.ammoPrimaryEmpty = true;
+			end
+		else
+			ply.ammoPrimaryEmpty = false;
+		end
+
+		ammoType = ply.activeWeapon:GetSecondaryAmmoType();
+		if ( ammoType != -1 && ply.activeWeapon:Clip2() <= 0 && ply:GetAmmoCount( ammoType ) == 0 ) then
+			if ( ply.ammoSecondaryEmpty == false ) then
+				SetSuitUpdate( ply, "AMO0", SUIT_NEXT_IMMEDIATELY );
+				ply.ammoSecondaryEmpty = true;
+			end
+		else
+			ply.ammoSecondaryEmpty = false;
+		end
+	else
+		ply.ammoPrimaryEmpty = false;
+		ply.ammoSecondaryEmpty = false;
 	end
 end
 hook.Add( "PlayerPostThink", "SuitVoice_Think", CheckSuitUpdate );
@@ -243,7 +273,7 @@ local function OnTakeDamage( ply, dmginfo )
 		return;
 	end
 
-	-- Armor calculations needed to get a proper diagnosis.
+	-- Armor calculations are needed to get a proper diagnosis.
 	local bonus = ARMOR_BONUS;
 	local ratio = ARMOR_RATIO;
 	if ( old_armor:GetBool() ) then
@@ -458,25 +488,46 @@ hook.Add( "EntityTakeDamage", "SuitVoice_OnTakeDamage", OnTakeDamage );
 -- Used for counting battery levels on pickup.
 local function ItemPickup( ply, item )
 	if ( ply.suitPlaylistCounting > 0 && ( item:GetClass() == "item_battery" || item:GetClass() == "hl1_item_battery" ) ) then
-		if ( ply:Armor() < MAX_NORMAL_BATTERY && ply:IsSuitEquipped() ) then
+		if ( ply:IsSuitEquipped() && ply:Armor() < MAX_NORMAL_BATTERY ) then
 			local batteryLevel = ( math.min( ply:Armor() + sk_battery:GetInt(), MAX_NORMAL_BATTERY ) * 100.0 ) * ( 1.0 / MAX_NORMAL_BATTERY ) + 0.5;
 			batteryLevel = math.floor( batteryLevel / 5 );
 			if ( batteryLevel > 0 ) then
 				batteryLevel = batteryLevel - 1;
 			end
+
 			SetSuitUpdate( ply, batteryLevel .. "P", SUIT_NEXT_IN_30SEC );
+		end
+	elseif ( !ply:IsSuitEquipped() && item:GetClass() == "item_suit" ) then
+		if ( bit.band( item:GetSpawnFlags(), SF_SUIT_SHORTLOGON ) > 0 ) then
+			SetSuitUpdate( ply, "A0", SUIT_NEXT_IMMEDIATELY );
+		else
+			SetSuitUpdate( ply, "AAx", SUIT_NEXT_IMMEDIATELY );
 		end
 	end
 end
 hook.Add( "PlayerCanPickupItem", "SuitVoice_ItemPickup", ItemPickup );
 
+-- Used for detecting the active weapon, and if its empty early.
+local function SwitchWeapon( ply, oldWeapon, newWeapon )
+	ply.activeWeapon = newWeapon;
+
+	if ( oldWeapon != newWeapon ) then
+		local ammoType = ply.activeWeapon:GetPrimaryAmmoType();
+		ply.ammoPrimaryEmpty = ammoType != -1 && ply.activeWeapon:Clip1() <= 0 && ply:GetAmmoCount( ammoType ) == 0;
+
+		ammoType = ply.activeWeapon:GetSecondaryAmmoType();
+		ply.ammoSecondaryEmpty = ammoType != -1 && ply.activeWeapon:Clip2() <= 0 && ply:GetAmmoCount( ammoType ) == 0;
+	end
+end
+hook.Add( "PlayerSwitchWeapon", "SuitVoice_SwitchWeapon", SwitchWeapon );
+
 
 -- Console Commands
 
--- Little utility.
+-- Returns the requested player via SteamID.
 local function GetTargetedPlayer( ply, id )
-	-- I think it's possible that someone could have the same number for
-	-- any of these three ID identifiers, but for now we'll assume that they're all different.
+	-- I think its possible that someone could have the same number for any of these 
+	-- three ID identifiers, but for now we'll assume that they're all different.
 	local targetedPlayer = ply;
 	if ( id != nil ) then
 		targetedPlayer = player.GetBySteamID64( id );
@@ -495,7 +546,7 @@ local function GetTargetedPlayer( ply, id )
 end
 
 function SuitUpdateReset( ply, _, args )
-	if ( ply != nil && !ply:IsAdmin() ) then
+	if ( ply == nil || !ply:IsAdmin() ) then
 		return;
 	end
 
@@ -508,10 +559,10 @@ function SuitUpdateReset( ply, _, args )
 		end
 	end
 end
-concommand.Add( "suitvoice_reset", SuitUpdateReset, nil, "Resets the suit voice system." );
+concommand.Add( "sv_suitvoice_reset", SuitUpdateReset, nil, "Resets the suit voice system." );
 
 function SuitUpdateSpeak( ply, _, args )
-	if ( ply != nil && !ply:IsAdmin() ) then
+	if ( ply == nil || !ply:IsAdmin() ) then
 		return;
 	end
 
@@ -524,4 +575,4 @@ function SuitUpdateSpeak( ply, _, args )
 		end
 	end
 end
-concommand.Add( "suitvoice_speak", SuitUpdateSpeak, nil, "Speaks a suit voice line." );
+concommand.Add( "sv_suitvoice_speak", SuitUpdateSpeak, nil, "Speaks a suit voice line." );

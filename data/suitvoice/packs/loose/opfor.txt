@@ -2,6 +2,10 @@
 // H.E.V. Suit Voice Pack - Opposing Force
 ////////////////////////////////////////////////////////////////
 
+// Initialization
+HEV_OPFOR_AAx player/pcv_vest
+HEV_OPFOR_A0 player/pcv_vest
+
 // Vital Sign Monitoring
 HEV_OPFOR_DMG0 fvox/boop
 

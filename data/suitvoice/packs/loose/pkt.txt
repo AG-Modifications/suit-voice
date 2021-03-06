@@ -2,6 +2,10 @@
 // H.E.V. Suit Voice Pack - Prospekt
 ////////////////////////////////////////////////////////////////
 
+// Initialization
+HEV_PKT_AAx player/pcv_vest
+HEV_PKT_A0 player/pcv_vest
+
 // Automatic Medical Systems
 HEV_PKT_MED1 hl1/fvox/(p140) boop, boop, boop, (p100) automedic_onpkt {Len 4.92 closecaption HEV.automedic_on}
 

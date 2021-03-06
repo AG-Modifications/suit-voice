@@ -5,39 +5,39 @@ local function SuitVoiceOptions( panel )
 
 	panel:AddControl( "Label", {
 		Text = "#suitvoice.options.note",
-		Command = "suitvoice_enabled",
+		Command = "cl_suitvoice_enabled",
 	} );
 
 	panel:AddControl( "CheckBox", {
 		Label = "#GameUI_Enabled",
-		Command = "suitvoice_enabled",
+		Command = "cl_suitvoice_enabled",
 	} );
 
 	panel:AddControl( "CheckBox", {
 		Label = "#suitvoice.options.counting",
-		Command = "suitvoice_counting",
+		Command = "cl_suitvoice_counting",
 	} );
 
 	panel:AddControl( "CheckBox", {
 		Label = "#suitvoice.options.unused",
-		Command = "suitvoice_unused",
+		Command = "cl_suitvoice_unused",
 	} );
 
 	panel:AddControl( "CheckBox", {
 		Label = "#suitvoice.options.extra",
-		Command = "suitvoice_extra",
+		Command = "cl_suitvoice_extra",
 	} );
 
 	panel:AddControl( "Slider", {
 		Type = "int",
 		Label = "#suitvoice.options.max",
-		Command = "suitvoice_max",
+		Command = "cl_suitvoice_max",
 		Min = 1,
 		Max = 16
 	} );
 
 	-- Parse over the voicepacks and add them to a single combo box for selecting.
-	local voicepackComboBox, _ = panel:ComboBox( "#suitvoice.options.voicepack", "suitvoice_pack" );
+	local voicepackComboBox, _ = panel:ComboBox( "#suitvoice.options.voicepack", "cl_suitvoice_pack" );
 	for _, v in pairs( suitVoicePacks ) do
 		if ( v.name == nil || v.value == nil ) then
 			break;
@@ -45,15 +45,8 @@ local function SuitVoiceOptions( panel )
 
 		voicepackComboBox:AddChoice( v.name, v.value );
 	end
-
-	local issueLink = panel:AddControl( "Button", {
-		Label = "#suitvoice.options.report"
-	} );
-	issueLink.DoClick = function()
-		gui.OpenURL( "http://steamcommunity.com/workshop/filedetails/discussion/470004201/530645446317199228/" )
-	end
 end
 
 hook.Add( "PopulateToolMenu", "PopulateSuitVoiceMenus", function()
-	spawnmenu.AddToolMenuOption( "Utilities", "Half-Life", "SuitVoiceOptions", "Suit Voice", "", "", SuitVoiceOptions );
+	spawnmenu.AddToolMenuOption( "Options", "Half-Life", "SuitVoiceOptions", "Suit Voice", "", "", SuitVoiceOptions );
 end );

@@ -2,6 +2,10 @@
 // H.E.V. Suit Voice Pack - Half-Life
 ////////////////////////////////////////////////////////////////
 
+// Initialization
+HEV_HL_AAx fvox/bell, HEV_logon, powerarmor_on, atmospherics_on, vitalsigns_on, automedic_on, weaponselect_on, munitionview_on, communications_on, safe_day {Len 41.76}
+HEV_HL_A0 fvox/bell, HEV_logon
+
 // Automatic Medical Systems
 HEV_HL_MED1 hl1/fvox/(p140) boop, boop, boop, (p100) automedic_on {Len 4.92 closecaption HEV.automedic_on}
 
